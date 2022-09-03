@@ -11,10 +11,5 @@ The F.R.A.A.P.L will, upon receiving a signal from the motion detector, snap a p
 The F.R.A.A.P.L fires by releasing compressed air behind a foam bullet. The compressed air is from a 3D printed air compressor, because it needs little overall force.
 
 # To Do
-Wring
-Finish designing, printing and testing compressor
-Calibrating
-Adding limit switches
-Replace code placeholders
-Other stuff I forgot
+Wring, Finish designing, printing and testing compressor, Calibrating, Adding limit switches, Replace code placeholders, Other stuff I forgot
 
