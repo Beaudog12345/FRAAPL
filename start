@@ -1,0 +1,4 @@
+#!/bin/bash
+sudo systemctl stop motion
+python3 main.py
+sudo systemctl start motion
