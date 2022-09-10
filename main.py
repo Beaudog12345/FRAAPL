@@ -19,11 +19,11 @@ OFFSE_DUTY = 0.5
 SERVO_MIN_DUTY = 2.5+OFFSE_DUTY
 SERVO_MAX_DUTY = 12.5+OFFSE_DUTY
 
-AngleYOffset = 1.002 # adjust for camera inaccuracy
-AngleXOffset = 0.998
-yOffset = 50 # adjust for distance between camera and motors
-xOffset = 300
-z = 72 # dist from camera to wall (in)
+AngleYOffset = 1.000 # adjust for camera inaccuracy
+AngleXOffset = 1.000
+yOffset = 0 # adjust for distance between camera and motors
+xOffset = 0
+z = 109 # dist from camera to wall (in)
 xRight = 500    # x maximum
 xLeft = 500     # x minimum
 yUp = 600       # y maximum
@@ -38,8 +38,8 @@ global p
 p = GPIO.PWM(servoPin, 50) # set Frequece to 50Hz
 p.start(0)
 
-imagePath = "/home/pi/camera/frame.jpg"
-cascPath = "/home/pi/camera/default.xml"
+imagePath = "/home/pi/FRAAPL/frame.jpg"
+cascPath = "/home/pi/FRAAPL/default.xml"
 
 camera = PiCamera()
 camera.start_preview()
@@ -50,7 +50,8 @@ def map( value, fromLow, fromHigh, toLow, toHigh):
 
 
 def servoWrite(angle): # make the servo rotate to specific angle, 0-180
-    if(angle<0):
+    angle = int(angle)
+    if(angle < 0):
         angle = 0
     elif(angle > 180):
         angle = 180
@@ -81,8 +82,8 @@ def getAngleX(x):
 
 def move(coords):
     cp = coords.split(',')
-    x = cp[0] - xOffset
-    y = cp[1] - yOffset
+    x = int(cp[0] - xOffset)
+    y = int(cp[1] - yOffset)
     yAngle = getAngleY(y)
     xAngle = getAngleX(x)
     servoWrite(yAngle)
@@ -94,7 +95,7 @@ def fire(coords):
 
 def getcoords():
 
-    camera.capture('/home/pi/camera/frame.jpg')
+    camera.capture('/home/pi/FRAAPL/frame.jpg')
 
     faceCascade = cv2.CascadeClassifier(cascPath)
 
@@ -108,15 +109,16 @@ def getcoords():
         minSize=(30, 30),
 #    flags = cv2.CV_HAAR_SCALE_IMAGE
     )
-
+#    print(type(faces[0]))
     print("Found {0} faces!".format(len(faces)))
     try:
-        for (x, y, w, h) in faces[0]:
-            y = abs(y - 500)
-            coords = x + "," + y
-            #    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
-
-            #cv2.imwrite('faces.jpg', image)
+        x = str(faces[0][0])
+        y = int(str(faces[0][1]))
+        y = str(abs(y - 500))
+        coords = x + "," + y
+        #    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        #cv2.imwrite('faces.jpg', image)
+        print(coords)
     except:
         coords = None
     return coords
@@ -124,13 +126,14 @@ def getcoords():
 servoWrite('90')
 stepperWrite('90')
 
-while True:
+try:
+    while True:
 #    if GPIO.input(sensorPin)==GPIO.HIGH:
-    coords = getcoords()
-    print(coords)
-    if not coords is None:
-        fire(coords)
-    sleep(1)
+        coords = getcoords()
+        print(coords)
+        #if not coords is None:
+        #    fire(coords)
+        sleep(1)
     #else:
-
-camera.stop_preview()
+except KeyboardInterrupt:
+    camera.stop_preview()
